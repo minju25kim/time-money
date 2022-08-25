@@ -6,15 +6,29 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import theme from "../src/theme";
 import createEmotionCache from "../src/createEmotionCache";
+import app from "../firebase/clientApp";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/router";
 
 // Client-side cache shared for the whole session
 // of the user in the browser.
 
 const clientSideEmotionCache = createEmotionCache();
 
-export default function MyApp(props) {
+function MyApp(props) {
+  const router = useRouter();
+  const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      console.log("signedin");
+      // ...
+    } else {
+      // send user to login page
+    }
+  });
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -37,3 +51,5 @@ MyApp.propTypes = {
   emotionCache: PropTypes.object,
   pageProps: PropTypes.object.isRequired,
 };
+
+export default MyApp;
