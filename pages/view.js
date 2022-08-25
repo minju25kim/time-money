@@ -1,11 +1,12 @@
 import HeadLayout from "../components/layout/Head";
-
-export default function Home() {
+import NavLayout from "../components/layout/Nav";
+function View() {
   return (
     <>
       <HeadLayout title="view" content="view page" />
 
       <main>
+        <NavLayout />
         <span>view page</span>
       </main>
 
@@ -15,3 +16,4 @@ export default function Home() {
     </>
   );
 }
+export default View;
