@@ -1,14 +1,16 @@
 import Button from "@mui/material/Button";
-import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+
+import Setting from "./Setting";
 import { useState } from "react";
+
 function NavLayout() {
   const [open, setOpen] = useState(false);
 
   function handleDrawer() {
     return open ? setOpen(false) : setOpen(true);
   }
-  console.log(open);
 
   return (
     <>
@@ -22,7 +24,7 @@ function NavLayout() {
         onClose={handleDrawer}
         onOpen={handleDrawer}
       >
-        drawer
+        <Setting open={open} setOpen={setOpen} />
       </SwipeableDrawer>
     </>
   );
