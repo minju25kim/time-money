@@ -1,55 +1,29 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import Head from "next/head";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { CacheProvider } from "@emotion/react";
-import theme from "../src/theme";
-import createEmotionCache from "../src/createEmotionCache";
-import app from "../firebase/clientApp";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useRouter } from "next/router";
+// 1. import `NextUIProvider` component
+import { NextUIProvider } from "@nextui-org/react";
+import { useState, useEffect } from "react";
+import { firebase, authService, dbService } from "../firebase/firebase";
 
-// Client-side cache shared for the whole session
-// of the user in the browser.
-
-const clientSideEmotionCache = createEmotionCache();
-
-function MyApp(props) {
-  const router = useRouter();
-  const auth = getAuth();
-  onAuthStateChanged(auth, (user) => {
+function MyApp({ Component, pageProps }) {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState([]);
+  authService.onAuthStateChanged((user) => {
     if (user) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/firebase.User
-      console.log("signedin");
-      // ...
-    } else {
-      // send user to login page
-    }
+      setLoggedIn(true);
+      setUser(user);
+    } else setLoggedIn(false);
   });
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   return (
-    <CacheProvider value={emotionCache}>
-      <Head>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-      </Head>
-      <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant,
-				consistent, and simple baseline to
-				build upon. */}
-
-        <CssBaseline />
-        <Component {...pageProps} />
-      </ThemeProvider>
-    </CacheProvider>
+    // 2. Use at the root of your app
+    <NextUIProvider>
+      <Component
+        {...pageProps}
+        loggedIn={loggedIn}
+        setLoggedIn={setLoggedIn}
+        user={user}
+        setUser={setUser}
+      />
+    </NextUIProvider>
   );
 }
-
-MyApp.propTypes = {
-  Component: PropTypes.elementType.isRequired,
-  emotionCache: PropTypes.object,
-  pageProps: PropTypes.object.isRequired,
-};
 
 export default MyApp;
